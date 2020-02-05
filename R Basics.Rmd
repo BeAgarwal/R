@@ -1,0 +1,359 @@
+''' By Shubham Agarwal
+    Link: https://github.com/BeAgarwal/R '''
+  
+BASIC OF R
+
+To clear the variable environment.
+
+```{r}
+rm(list=ls())
+```
+
+To clear particular variable from environment.
+
+```{r}
+a=10
+rm(a)
+```
+
+To clear the console.
+control + L
+
+We can define a variable using = and <-
+
+```{r}
+a = 10
+b <- 20
+print(a)
+print(b)
+```
+
+To concat the variable.
+
+```{r}
+print(c(a,b))
+```
+
+To save a single variable available in workspace
+& to save a full workspace with specified file name.
+
+```{r}
+save(a,file="file1.Rdata")
+save(list=ls(all.names=TRUE),file="file1.Rdata")
+save.image() #shortcut to save whole workspace
+```
+
+To load the saved workspace
+
+```{r}
+load(file="file1.Rdata")
+```
+
+Predefined constants in R:
+
+```{r}
+pi
+letters
+LETTERS
+month.name
+month.abb
+```
+
+Find data type of object
+
+```{r}
+typeof(a)
+```
+
+Verify if object is of certain datatype
+
+```{r}
+is.integer(a)
+is.double(a)
+```
+
+Convert into another data type (Type Casting)
+
+```{r}
+as.integer(a)
+as.complex(a)
+```
+
+VECTOR: Ordered collection of same data types
+LIST: Ordered collection of objects
+DATAFRAME: Generic tabular objects
+
+Vector
+
+```{r}
+vec = c(1.2, 3.4 , 4.2)
+print(vec)
+```
+
+List
+
+```{r}
+l = list(1, 2.7, "andrew")
+print(l)
+```
+
+```{r}
+l = list("Roll"=1,"Name"="Andrew")
+print(l$Name)
+```
+
+```{r}
+l = list(1,3,5,list(2,4,6),list(7,8,9))
+l[[5]][[1]] #7
+l[[3]]      #5
+l[[4]][[3]] #6
+```
+
+Update in the list
+
+```{r}
+l[[2]] = "C2"
+l[[2]]
+```
+
+Data Frame
+
+```{r}
+roll = c(1,2,3,4,5)
+name = c("Andrew","Amit","Bob","Charles","George")
+course = c("MCA1","MCA2","MCA1","MCA5","MCA3")
+df = data.frame(roll,name,course)
+df
+```
+
+Create a dataframe using data from a file
+
+DF = read.table(path="",sep="")
+
+
+subset() which extracts subset of data based on conditions.
+
+```{r}
+pd = data.frame("Name"=c("Andrew","Amit","Bob","Charles","George"),"roll" = c(1,2,3,4,5),"course" = c("MCA1","MCA2","MCA1","MCA5","MCA3"))
+
+pd2 = subset(pd, roll>3)
+print(pd2)
+```
+
+Adding extra rows and extra columns using rbind and cbind.
+
+```{r}
+df = rbind(pd, data.frame(Name = "Michael",roll = 6, course = "MCA6"))
+print(df)
+
+df = cbind(df, phone=c(123,456,789,321,654,987))
+print(df)
+```
+
+Deleting rows and columns
+
+```{r}
+df
+df = df[-6,]  #Deleting row
+df
+df = df[,!names(df) %in% c("phone")]   #Deleting column
+df
+df = df[!df$Name == "Charles",] #Condition based deletion
+df
+```
+
+RECASTING
+is the process of manipulating a data frame in terms of its variable.
+We have to use the library reshape2.
+
+```{r}
+install.packages('reshape2')
+```
+
+Recast can be done in two steps.
+-> Melt
+melt(data, id.vars, measures.vars, variable.name="variable", value.name="value")
+
+-> Cast
+dcast(data, formula, value.var = col. with values)
+
+```{r}
+pd = data.frame("Name"=c("Andrew","Amit","Bob","Charles","George"),"Age"=c(25,21,18,26,28),"Month"=c("Jan","Feb","Jun","Dec","May"),"BP"=c(90,78,65,120,110))
+print(pd)
+
+library(reshape2)
+meltpd = melt(pd, id.vars=c("Name","Month"), 
+              measure.vars=c("Age","BP"))
+print(meltpd)
+
+dcastpd = dcast(meltpd, variable+Month ~ Name, value.var = "value")
+print(dcastpd)
+```
+
+Recast in single step.
+recast(data, formula, ....,id.var, measure.var)
+
+```{r}
+pd = data.frame("Name"=c("Andrew","Amit","Bob","Charles","George"),"Age"=c(25,21,18,26,28),"Month"=c("Jan","Feb","Jun","Dec","May"),"BP"=c(90,78,65,120,110))
+print(pd)
+
+recastpd = recast(pd, variable+Month ~ Name, id.var = c("Name","Month"))
+print(recastpd)
+```
+
+library dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges: 
+mutate() adds new variables that are functions of existing variables. 
+select() picks variables based on their names.
+
+```{r}
+install.packages('dplyr')
+```
+
+```{r}
+library(dplyr)
+pd2 = mutate(pd, log_BP = log(BP))
+print(pd2)
+
+pd3 = select(pd, "Name", "BP")
+print(pd3)
+```
+
+Joining of two data frames.
+Follwing commands can be used to combine datasets.
+-> left_join()
+-> right_join()
+-> full_join()
+-> inner_join()
+-> anti_join()
+
+```{r}
+library(dplyr)
+
+df1 = data.frame("Roll"=c(1,2,3,4,5,6,7,8,9,10),"Name"=c("Andrew","Annie","Amit","Bob","Charles","Daizy","George","Mini","Luna","Kamal"))
+
+df2 = data.frame("Roll"=c(1,2,3,4,5,6,7,8,9,10),"Gender"=c('M','F','M','M','M','F','M','F','F','M'))
+
+df3 = data.frame("Roll"=c(1,2,3,4,5,6,7,8,9,10),"Marks"=c(98,65,78,34,67,81,49,56,45,90))
+
+df_full_join = full_join(df2, df1, by="Roll")
+df_full_join2 = full_join(df_full_join, df3, by="Roll")
+print(df_full_join2)
+```
+
+
+Arithmetic:
+Hierarchy of operations:
+Bracket                    ()
+Exponent                   ^, **
+Division                    /
+Multiplication              *
+Addition and subtraction   +,-
+
+Logical:
+Symbols: <, <=, >, >=, ==, !=, !, |, &, isTRUE
+
+Matrix Operations:
+To create a matrix:
+
+
+```{r}
+A = matrix()
+B = matrix(c(1,2,3,4,5,6,7,8,9))
+C = matrix(c(1,2,3,4,5,6,7,8,9), nrow = 3, ncol = 3, byrow = FALSE)
+D = matrix(3,3,4)
+E = diag(c(4,5,6),3,3)  #DIAGONAL MATRIX
+I = diag(1,3,3)     #IDENTITY MATRIX
+```
+
+MATRIX METRICS:
+
+Finding the size of the matrix, A:
+dim(A) will return the size of the matrix
+nrow(A) will return the number of rows
+ncol(A) will return the number of columns
+prod(dim(A)) or length(A) will return the number of elements
+```{r}
+A = matrix(c(1,2,3,4,5,6,7,8,9), nrow = 3, ncol = 3, byrow = TRUE)
+dim(A)
+nrow(A)
+ncol(A)
+prod(dim(A))
+```
+
+Strings can be assigned as names of rows and columns using rownames() and colnames()
+
+```{r}
+rownames(A) = c("a","b","c")
+colnames(A) = c("d","e","f")
+A
+```
+
+Accessing from matrix:
+```{r}
+A
+A[,1] #access the column
+A[2,3]
+A[2,]  #access the row
+A[,-2] #access the column that has to be avoided
+A[-2,] #access the row that has to be avoided
+```
+
+Colon Operator:
+```{r}
+1:10
+10:-1
+```
+
+Colon notation can also be used to pick sub-matrices.
+```{r}
+A
+A[1:3,1:2]
+A[1:3,-3]
+A[c(1,3),1:2]
+```
+
+Matric Concatenation: refers to merging of a row or column to a matrix
+->Concatenation of a row to a matrix is done sing rbind()
+->Concatenation of a column to a matrix is done using cbind()
+->Consistency of the dimensions between the matrix and the vector should be checked before concatenation
+```{r}
+A
+B = matrix(c(10,11,12), nrow = 1, ncol = 3)
+C = rbind(A,B)
+C
+```
+
+Deleting the column or row
+```{r}
+A = A[-4,]
+A
+```
+
+Matrix Algebra:
+Addition             A+B
+Subtraction          A-B
+Multiplication       
+      Regular matrix multiplication  A%*%B
+      Element-wise multiplication    A*B
+Matrix Division      A/B (element-wise)
+
+```{r}
+mat1 = matrix(c(2,2,2,2), ncol = 2, nrow = 2)
+mat1
+mat2 = matrix(c(1,2,3,4), nrow = 2, ncol = 2)
+mat2
+mat1 + mat2
+mat1 - mat2
+mat1 %*% mat2
+mat1 * mat2
+mat1 / mat2
+```
+
+
+
+
+
+
+
+
+

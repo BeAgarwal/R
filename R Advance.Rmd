@@ -1,0 +1,131 @@
+''' By Shubham Agarwal
+    Link: https://github.com/BeAgarwal/R '''
+    
+Advanced Programming in R
+
+Functions in R
+-> A function accepts input arguments and produces output by executing valid R commands present n the function.
+-> Function name and function names need not to be same.
+-> Functions are created using the command function().
+
+```{r}
+area = function(r=10){
+  a = 2 * 3.14 * r
+  return (a)
+}
+ans = area(20)
+ans
+```
+
+Function with multiple inputs and outputs.
+```{r}
+rectangle = function(l, b){
+  ar = l * b
+  pr = 2 * (l + b)
+  result = list("Area"=ar, "perimeter"=pr)
+  return (result)
+}
+ans = rectangle(10,20)
+ans
+```
+
+Inline Function
+```{r}
+func = function(x) x^2+5*x+20
+func(9)
+```
+
+Looping over Objects:
+There are a few looping functions that are pretty useful when working interactively on a command line.
+apply -> Apply a function over the margins of a array or matrix
+lapply -> Apply a function over a list or a vector
+tapply -> Apply a function over a ragged array
+mapply -> Multivariate version of lapply
+xxply -> plyr package
+
+apply function:
+Syntax: apply(array, margins, function,...)
+```{r}
+A = matrix(1:9,3,3)
+A
+apply(A,1,sum)  #Row
+apply(A,2,sum)  #Column
+```
+
+lapply function:
+Syntax: mapply(list, function,...)
+```{r}
+A = matrix(1:9,3,3)
+B = matrix(10:18,3,3)
+list1 = list(A,B)
+determinant = lapply(list1,det)
+determinant
+```
+
+mapply function:
+Syntax: mapply(function, list1, list2,...)
+```{r}
+rectangle = function(l, b){
+  ar = l * b
+  pr = 2 * (l + b)
+  result = list("Area"=ar, "perimeter"=pr)
+  return (result)
+}
+A = list(1,2,3,4)
+B = list(10,20,40,30)
+determinant = mapply(rectangle, A, B)
+determinant
+```
+
+tapply function:
+Syntax: tapply(vector, factors, function,...)
+```{r}
+Id = c(1,1,1,1,2,2,2,3,3)
+Values = c(1,2,3,4,5,6,7,8,9)
+tapply(Values,Id,sum)  
+```
+
+Sequence function:
+A sequence is one of the components of a 'for loop'.
+Syntax: seq(from, to, by, length)
+from -> starting number
+to -> ending number
+by -> increment or decrement(width)
+length -> number of elements required
+
+```{r}
+seq(from=1, to=10, by=2)
+seq(from=10, to=100, length=4)
+```
+
+DATA VISUALIZATION IN R
+
+Scatter Plot
+```{r}
+X = 1:10
+Y = X^2
+plot(Y)
+```
+
+Dataset 'mtcars': A data frame with 32 observations on 11 variables.
+
+```{r}
+plot(mtcars$wt, mtcars$mpg, main="ScatterPlot", xlab="Car weight", ylab="Miles per Gallon", pch=19)
+```
+
+Line Plot:
+```{r}
+X = 1:10
+Y = X^2
+plot(X,Y,type='l')
+```
+
+Bar Plot:
+Syntax: barplot(list, names.arg, xlab, ylab, main, names.arg, col)
+```{r}
+H = c(7,12,28,3,41)
+M = c("Mar", "Apr", "May", "Jun", "Jul")
+barplot(H, names.arg = M, xlab = "Month", ylab = "Revenue", col = "blue", main = "Revenue chart", border = "blue")
+```
+
+
